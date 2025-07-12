@@ -9,8 +9,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -20,36 +18,42 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.analytics,
+                size: 80,
+                color: Colors.blue,
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 24),
+              const Text(
+                'AI Social Media Assistant',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const DashboardScreen()),
-                );
-              },
-              child: const Text('Login'),
-            ),
-          ],
+              const SizedBox(height: 16),
+              const Text(
+                'Analyze Twitter mentions and convert leads with AI',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const DashboardScreen()),
+                  );
+                },
+                icon: const Icon(Icons.dashboard),
+                label: const Text('Enter Dashboard'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

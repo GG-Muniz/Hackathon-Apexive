@@ -4,45 +4,58 @@ import 'package:http/http.dart' as http;
 class ApiService {
   static const String baseUrl = 'http://localhost:3000';
 
-  Future<Map<String, dynamic>> login(String email, String password) async {
+  Future<List<dynamic>> getAnalyzedMentions() async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/api/login'),
+      final response = await http.get(
+        Uri.parse('$baseUrl/analyze-mentions'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'email': email, 'password': password}),
       );
       
-      return json.decode(response.body);
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to load mentions');
+      }
     } catch (e) {
-      return {'error': 'Failed to connect to server'};
+      throw Exception('Failed to connect to server: $e');
     }
   }
 
-  Future<Map<String, dynamic>> generateSocialMediaPost(String prompt) async {
+  Future<Map<String, dynamic>> createLead(String contactName, String description) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/api/generate-post'),
+        Uri.parse('$baseUrl/create-lead'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'prompt': prompt}),
+        body: json.encode({
+          'contact_name': contactName,
+          'description': description,
+        }),
       );
       
-      return json.decode(response.body);
+      if (response.statusCode == 201) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to create lead');
+      }
     } catch (e) {
-      return {'error': 'Failed to generate post'};
+      throw Exception('Failed to create lead: $e');
     }
   }
 
-  Future<Map<String, dynamic>> postToTwitter(String content) async {
+  Future<Map<String, dynamic>> checkHealth() async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/api/post-twitter'),
+      final response = await http.get(
+        Uri.parse('$baseUrl/health'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'content': content}),
       );
       
-      return json.decode(response.body);
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Server unhealthy');
+      }
     } catch (e) {
-      return {'error': 'Failed to post to Twitter'};
+      throw Exception('Failed to connect to server: $e');
     }
   }
 }
