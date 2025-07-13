@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const odoo = require('./odoo_service');
 const { getMentions } = require('./twitter_service');
-const { analyzeTweet } = require('./ai_agent_service');
+const { analyzeTweet, generateReply } = require('./ai_agent_service');
 const mockMentions = require('./tests/mock_data');
 require('dotenv').config();
 
@@ -95,6 +95,38 @@ app.get('/analyze-mentions', async (req, res) => {
     } catch (err) {
         console.error(' > MOCK DATA ERROR:', err);
         res.status(500).json({ error: 'Failed to serve mock data.', details: err.message });
+    }
+});
+
+// Generate AI reply for a tweet
+app.post('/generate-reply', async (req, res) => {
+    const { tweet_text, author_username, sentiment, is_lead, suggested_action } = req.body;
+    console.log('\n--- [REQUEST] Received request to /generate-reply ---');
+    console.log(` > Tweet: "${tweet_text}" by @${author_username}`);
+    console.log(` > Context: ${sentiment} sentiment, ${is_lead ? 'IS' : 'NOT'} a lead`);
+    
+    if (!tweet_text || !author_username) {
+        return res.status(400).json({ error: 'tweet_text and author_username are required.' });
+    }
+    
+    try {
+        console.log(' > Generating AI reply...');
+        const reply = await generateReply(tweet_text, author_username, sentiment, is_lead, suggested_action);
+        
+        const result = {
+            original_tweet: tweet_text,
+            author_username,
+            suggested_reply: reply,
+            context: { sentiment, is_lead, suggested_action },
+            timestamp: new Date().toISOString()
+        };
+        
+        console.log(' > AI reply generated successfully');
+        res.status(200).json(result);
+        
+    } catch (err) {
+        console.error(' > REPLY GENERATION ERROR:', err);
+        res.status(500).json({ error: 'Failed to generate reply.', details: err.message });
     }
 });
 

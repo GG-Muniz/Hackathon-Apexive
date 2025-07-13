@@ -54,4 +54,37 @@ const analyzeTweet = async (tweetText, tweetAuthor) => {
     }
 };
 
-module.exports = { analyzeTweet };
+/**
+ * Generates a contextually appropriate reply to a tweet using AI.
+ * @param {string} tweetText The original tweet text
+ * @param {string} tweetAuthor The username who wrote the tweet
+ * @param {string} sentiment The sentiment analysis result
+ * @param {boolean} isLead Whether this is identified as a potential lead
+ * @param {string} suggestedAction The recommended action from analysis
+ * @returns {Promise<string>} A suggested reply message
+ */
+const generateReply = async (tweetText, tweetAuthor, sentiment, isLead, suggestedAction) => {
+    console.log(`[MOCK AI] Generating reply for tweet from ${tweetAuthor}`);
+
+    // TEMPORARY: Mock reply generation while fixing OpenAI quota
+    const mockReply = (() => {
+        const text = tweetText.toLowerCase();
+        
+        if (isLead && (text.includes('help') || text.includes('support') || text.includes('problem'))) {
+            return `Hi @${tweetAuthor}! I'm sorry to hear you're having trouble. Let me connect you with our support team who can help resolve this quickly. Please DM us your order details and we'll get this sorted out! 🛠️`;
+        } else if (isLead && (text.includes('pricing') || text.includes('demo') || text.includes('interested'))) {
+            return `Thanks for your interest @${tweetAuthor}! I'd love to show you what our software can do. Would you like to schedule a quick 15-minute demo? Feel free to DM me your availability! 📅`;
+        } else if (sentiment === 'Positive' && (text.includes('love') || text.includes('awesome') || text.includes('amazing'))) {
+            return `Thank you so much @${tweetAuthor}! 🙏 We're thrilled you're enjoying our product. Your feedback means the world to us. Mind sharing your experience with others who might benefit?`;
+        } else if (sentiment === 'Positive' && text.includes('recommend')) {
+            return `@${tweetAuthor} Thank you for the recommendation! 🌟 It's customers like you who make what we do so rewarding. We really appreciate you spreading the word!`;
+        } else {
+            return `Hi @${tweetAuthor}! Thanks for reaching out. We're here to help - please let us know if you have any questions or if there's anything we can assist you with! 😊`;
+        }
+    })();
+
+    console.log('[MOCK AI] Generated reply:', mockReply);
+    return mockReply;
+};
+
+module.exports = { analyzeTweet, generateReply };
