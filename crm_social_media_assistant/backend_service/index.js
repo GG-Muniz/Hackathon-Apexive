@@ -83,38 +83,18 @@ app.post('/schedule-post', async (req, res) => {
     }
 });
 
-// LIVE DATA ENDPOINT
+// ANALYZE MENTIONS ENDPOINT (USING MOCK DATA)
 app.get('/analyze-mentions', async (req, res) => {
-    console.log('\n--- [LIVE REQUEST] Received request to /analyze-mentions ---');
+    console.log('\n--- [MOCK REQUEST] Received request to /analyze-mentions ---');
+    console.log(' > Using mock data for reliable testing (Twitter API disabled)');
     try {
-        // Step 1: Fetch from Twitter
-        console.log(' > Step 1: Fetching mentions from Twitter API...');
-        const mentions = await getMentions();
-        if (mentions.length === 0) {
-            console.log(' > Found 0 new mentions.');
-            return res.status(200).json([]);
-        }
-        console.log(` > Found ${mentions.length} mentions.`);
-
-        // Step 2: Analyze with AI
-        console.log(' > Step 2: Sending mentions to AI Agent for analysis...');
-        const analysisPromises = mentions.map(mention =>
-            analyzeTweet(mention.text, mention.author_username)
-        );
-        const analyses = await Promise.all(analysisPromises);
-        console.log(' > AI analysis complete.');
-
-        // Step 3: Combine and Respond
-        const enrichedMentions = mentions.map((mention, index) => ({
-            ...mention,
-            ai_analysis: analyses[index],
-        }));
-        console.log(' > Step 3: Sending enriched data to frontend.');
-        res.status(200).json(enrichedMentions);
+        // Use mock data instead of live Twitter API
+        console.log(' > Serving pre-analyzed mock mentions data');
+        res.status(200).json(mockMentions);
 
     } catch (err) {
-        console.error(' > ANALYSIS ERROR:', err);
-        res.status(500).json({ error: 'Failed to analyze mentions.', details: err.message });
+        console.error(' > MOCK DATA ERROR:', err);
+        res.status(500).json({ error: 'Failed to serve mock data.', details: err.message });
     }
 });
 
