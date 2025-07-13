@@ -1,9 +1,11 @@
-// index.js
+// crm_social_media_assistant/backend_service/index.js
+
 const express = require('express');
 const cors = require('cors');
 const odoo = require('./odoo_service');
 const { getMentions } = require('./twitter_service');
 const { analyzeTweet } = require('./ai_agent_service');
+const mockMentions = require('./tests/mock_data');
 require('dotenv').config();
 
 const app = express();
@@ -25,6 +27,17 @@ const connectToOdoo = async () => {
 
 // --- API ENDPOINTS ---
 
+// =============================================================================
+// MOCK DATA ENDPOINT FOR DEVELOPMENT
+// =============================================================================
+app.get('/analyze-mentions-mock', (req, res) => {
+    console.log('\n--- [MOCK REQUEST] Received request to /analyze-mentions-mock ---');
+    console.log(' > Serving mock data from ./tests/mock_data.js.');
+    res.status(200).json(mockMentions);
+});
+// =============================================================================
+
+
 // Create a CRM Lead in Odoo
 app.post('/create-lead', async (req, res) => {
     const { contact_name, description } = req.body;
@@ -36,9 +49,9 @@ app.post('/create-lead', async (req, res) => {
         return res.status(400).json({ error: 'contact_name and description are required.' });
     }
     try {
-        console.log(' > Connecting to Odoo...');
+        console.log(' > Connecting to Odoo...'); // <-- CORRECTED LINE
         await connectToOdoo();
-        console.log(' > Creating lead in Odoo CRM...');
+        console.log(' > Creating lead in Odoo CRM...'); // <-- CORRECTED LINE
         const leadId = await odoo.create('crm.lead', {
             name: `Lead from Twitter: ${contact_name}`,
             contact_name: contact_name,
@@ -71,9 +84,10 @@ app.post('/schedule-post', async (req, res) => {
     }
 });
 
-// Fetch Twitter mentions and analyze them with the AI Agent
+
+// LIVE DATA ENDPOINT
 app.get('/analyze-mentions', async (req, res) => {
-    console.log('\n--- [REQUEST] Received request to /analyze-mentions ---');
+    console.log('\n--- [LIVE REQUEST] Received request to /analyze-mentions ---');
     try {
         // Step 1: Fetch from Twitter
         console.log(' > Step 1: Fetching mentions from Twitter API...');
@@ -105,6 +119,7 @@ app.get('/analyze-mentions', async (req, res) => {
         res.status(500).json({ error: 'Failed to analyze mentions.', details: err.message });
     }
 });
+
 
 // --- SERVER START ---
 app.listen(port, () => {
