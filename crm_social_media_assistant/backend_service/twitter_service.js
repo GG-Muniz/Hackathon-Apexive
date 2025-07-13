@@ -7,18 +7,24 @@ const roClient = twitterClient.readOnly;
 
 const getMentions = async () => {
     try {
-        const meUser = await roClient.v2.me();
-        const userId = meUser.data.id;
+        // We now get the user ID directly from our environment variables.
+        const userId = process.env.TWITTER_ACCOUNT_ID_TO_MONITOR;
 
-        console.log(`Fetching mentions for user ID: ${userId}`);
+        if (!userId) {
+            throw new Error('TWITTER_ACCOUNT_ID_TO_MONITOR is not set in the .env file.');
+        }
 
+        console.log(`--- [Twitter API] Fetching mentions for configured user ID: ${userId} ---`);
+
+        // Fetch the timeline of tweets mentioning the user ID
         const mentions = await roClient.v2.userMentionTimeline(userId, {
             'tweet.fields': ['created_at', 'author_id', 'text'],
             'expansions': ['author_id'],
         });
 
-        const tweets = mentions.data.data || [];
-        const users = mentions.data.includes?.users || [];
+        // The data can be undefined if there are no mentions, so we default to an empty array.
+        const tweets = mentions.data?.data || [];
+        const users = mentions.data?.includes?.users || [];
 
         const userMap = users.reduce((acc, user) => {
             acc[user.id] = user.username;
@@ -33,7 +39,7 @@ const getMentions = async () => {
             author_username: userMap[tweet.author_id]
         }));
         
-        console.log(`Found ${formattedTweets.length} mentions.`);
+        console.log(`> Found ${formattedTweets.length} mentions.`);
         return formattedTweets;
 
     } catch (err) {

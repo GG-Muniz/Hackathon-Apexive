@@ -1,19 +1,19 @@
-// index.js
+// crm_social_media_assistant/backend_service/index.js
+
 const express = require('express');
-const cors = require('cors'); // <-- REQUIRE CORS
+const cors = require('cors');
 const odoo = require('./odoo_service');
 const { getMentions } = require('./twitter_service');
 const { analyzeTweet } = require('./ai_agent_service');
+const mockMentions = require('./tests/mock_data');
 require('dotenv').config();
 
 const app = express();
 const port = 3000;
 
 // --- MIDDLEWARE ---
-app.use(cors()); // <-- USE CORS TO ALLOW REQUESTS FROM THE FLUTTER APP
+app.use(cors());
 app.use(express.json());
-
-
 // Re-usable connection function
 const connectToOdoo = async () => {
     try {
@@ -26,21 +26,40 @@ const connectToOdoo = async () => {
 
 // --- API ENDPOINTS ---
 
+// =============================================================================
+// MOCK DATA ENDPOINT FOR DEVELOPMENT
+// =============================================================================
+app.get('/analyze-mentions-mock', (req, res) => {
+    console.log('\n--- [MOCK REQUEST] Received request to /analyze-mentions-mock ---');
+    console.log(' > Serving mock data from ./tests/mock_data.js.');
+    res.status(200).json(mockMentions);
+});
+// =============================================================================
+
+
 // Create a CRM Lead in Odoo
 app.post('/create-lead', async (req, res) => {
     const { contact_name, description } = req.body;
+    console.log('\n--- [REQUEST] Received request to /create-lead ---');
+    console.log(` > Contact Name: ${contact_name}`);
+
     if (!contact_name || !description) {
+        console.log(' > Validation FAILED: Missing parameters.');
         return res.status(400).json({ error: 'contact_name and description are required.' });
     }
     try {
+        console.log(' > Connecting to Odoo...');
         await connectToOdoo();
+        console.log(' > Creating lead in Odoo CRM...');
         const leadId = await odoo.create('crm.lead', {
             name: `Lead from Twitter: ${contact_name}`,
             contact_name: contact_name,
             description: description,
         });
+        console.log(` > SUCCESS: Lead created with ID: ${leadId}`);
         res.status(201).json({ message: 'Lead created successfully', lead_id: leadId });
     } catch (err) {
+        console.error(' > ODOO ERROR:', err);
         res.status(500).json({ error: 'Failed to create lead.', details: err.message });
     }
 });
@@ -64,20 +83,37 @@ app.post('/schedule-post', async (req, res) => {
     }
 });
 
-// Fetch Twitter mentions and analyze them with the AI Agent
+// LIVE DATA ENDPOINT
 app.get('/analyze-mentions', async (req, res) => {
+    console.log('\n--- [LIVE REQUEST] Received request to /analyze-mentions ---');
     try {
+        // Step 1: Fetch from Twitter
+        console.log(' > Step 1: Fetching mentions from Twitter API...');
         const mentions = await getMentions();
+        if (mentions.length === 0) {
+            console.log(' > Found 0 new mentions.');
+            return res.status(200).json([]);
+        }
+        console.log(` > Found ${mentions.length} mentions.`);
+
+        // Step 2: Analyze with AI
+        console.log(' > Step 2: Sending mentions to AI Agent for analysis...');
         const analysisPromises = mentions.map(mention =>
             analyzeTweet(mention.text, mention.author_username)
         );
         const analyses = await Promise.all(analysisPromises);
+        console.log(' > AI analysis complete.');
+
+        // Step 3: Combine and Respond
         const enrichedMentions = mentions.map((mention, index) => ({
             ...mention,
             ai_analysis: analyses[index],
         }));
+        console.log(' > Step 3: Sending enriched data to frontend.');
         res.status(200).json(enrichedMentions);
+
     } catch (err) {
+        console.error(' > ANALYSIS ERROR:', err);
         res.status(500).json({ error: 'Failed to analyze mentions.', details: err.message });
     }
 });
