@@ -1,0 +1,16 @@
+# This is a template for the environment variables.
+# DO NOT COMMIT THE ACTUAL .env FILE.
+# Copy this file to a new file named .env and fill in your actual keys.
+
+# Odoo Credentials
+ODOO_URL=http://127.0.0.1:8069
+ODOO_DB=odoo
+ODOO_USERNAME=admin
+ODOO_PASSWORD=admin
+
+# Twitter API v2 Credentials
+TWITTER_BEARER_TOKEN=YOUR_BEARER_TOKEN_HERE
+TWITTER_ACCOUNT_ID_TO_MONITOR=THE_NUMERIC_ID_OF_THE_TWITTER_ACCOUNT_TO_TRACK
+
+# OpenAI API Key
+OPENAI_API_KEY=YOUR_SK_KEY_FROM_OPENAI_HERE
