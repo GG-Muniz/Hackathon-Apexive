@@ -10,6 +10,14 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final ApiService _apiService = ApiService();
+  String _selectedPlatform = 'twitter';
+  
+  final Map<String, IconData> _platformIcons = {
+    'twitter': Icons.alternate_email,
+    'linkedin': Icons.business,
+    'instagram': Icons.camera_alt,
+    'facebook': Icons.group,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +40,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(height: 20),
+            
+            // Platform Selector
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  const Text('Platform: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Expanded(
+                    child: Wrap(
+                      spacing: 8,
+                      children: _platformIcons.entries.map((entry) {
+                        final isSelected = entry.key == _selectedPlatform;
+                        return FilterChip(
+                          avatar: Icon(entry.value, size: 16),
+                          label: Text(entry.key.toUpperCase()),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            setState(() {
+                              _selectedPlatform = entry.key;
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            
             Expanded(
               child: FutureBuilder<List<dynamic>>(
-                future: _apiService.getAnalyzedMentions(),
+                future: _apiService.getAnalyzedMentions(platform: _selectedPlatform),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -70,37 +112,111 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     itemCount: mentions.length,
                     itemBuilder: (context, index) {
                       final mention = mentions[index];
+                      final analysis = mention['ai_analysis'] ?? {};
+                      final isLead = analysis['is_lead'] == true;
+                      final priority = analysis['priority'] ?? 'Medium';
+                      final suggestedAction = analysis['suggested_action'] ?? '';
+                      
+                      Color priorityColor = Colors.green;
+                      if (priority == 'Critical') priorityColor = Colors.red;
+                      else if (priority == 'High') priorityColor = Colors.orange;
+                      else if (priority == 'Low') priorityColor = Colors.blue;
+                      
                       return Card(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        child: ListTile(
-                          leading: Icon(
-                            mention['ai_analysis']?['is_lead'] == true 
-                              ? Icons.star 
-                              : Icons.chat_bubble_outline,
-                            color: mention['ai_analysis']?['is_lead'] == true 
-                              ? Colors.amber 
-                              : Colors.blue,
-                          ),
-                          title: Text(mention['author_username'] ?? 'Unknown'),
-                          subtitle: Text(mention['text'] ?? ''),
-                          trailing: mention['ai_analysis']?['is_lead'] == true
-                            ? Row(
-                                mainAxisSize: MainAxisSize.min,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        elevation: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Header Row
+                              Row(
                                 children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.reply),
-                                    onPressed: () => _generateReply(mention),
+                                  Icon(_platformIcons[_selectedPlatform], size: 20),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      '@${mention['author_username'] ?? 'Unknown'}',
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                    ),
                                   ),
-                                  IconButton(
-                                    icon: const Icon(Icons.person_add),
-                                    onPressed: () => _createLead(mention),
+                                  if (isLead) const Icon(Icons.star, color: Colors.amber, size: 20),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: priorityColor,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      priority,
+                                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                                    ),
                                   ),
                                 ],
-                              )
-                            : IconButton(
-                                icon: const Icon(Icons.reply),
-                                onPressed: () => _generateReply(mention),
                               ),
+                              const SizedBox(height: 12),
+                              
+                              // Content
+                              Text(
+                                mention['text'] ?? '',
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              const SizedBox(height: 12),
+                              
+                              // Prominent Suggested Action
+                              if (suggestedAction.isNotEmpty)
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.shade50,
+                                    border: Border.all(color: Colors.blue.shade200),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Row(
+                                        children: [
+                                          Icon(Icons.lightbulb_outline, size: 16, color: Colors.blue),
+                                          SizedBox(width: 4),
+                                          Text('Suggested Action:', 
+                                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(suggestedAction, style: const TextStyle(fontSize: 13)),
+                                    ],
+                                  ),
+                                ),
+                              const SizedBox(height: 12),
+                              
+                              // Action Buttons
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton.icon(
+                                    onPressed: () => _generateReply(mention),
+                                    icon: const Icon(Icons.reply, size: 16),
+                                    label: const Text('Reply'),
+                                  ),
+                                  if (isLead) ...[
+                                    const SizedBox(width: 8),
+                                    ElevatedButton.icon(
+                                      onPressed: () => _createLead(mention),
+                                      icon: const Icon(Icons.person_add, size: 16),
+                                      label: const Text('Create Lead'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.green,
+                                        foregroundColor: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },

@@ -5,7 +5,7 @@ const cors = require('cors');
 const odoo = require('./odoo_service');
 const { getMentions } = require('./twitter_service');
 const { analyzeTweet, generateReply } = require('./ai_agent_service');
-const mockMentions = require('./tests/mock_data');
+const { mockMentions, generateMockDataByPlatform } = require('./tests/mock_data');
 require('dotenv').config();
 
 const app = express();
@@ -85,12 +85,15 @@ app.post('/schedule-post', async (req, res) => {
 
 // ANALYZE MENTIONS ENDPOINT (USING MOCK DATA)
 app.get('/analyze-mentions', async (req, res) => {
+    const platform = req.query.platform || 'twitter';
     console.log('\n--- [MOCK REQUEST] Received request to /analyze-mentions ---');
+    console.log(` > Platform: ${platform}`);
     console.log(' > Using mock data for reliable testing (Twitter API disabled)');
     try {
-        // Use mock data instead of live Twitter API
-        console.log(' > Serving pre-analyzed mock mentions data');
-        res.status(200).json(mockMentions);
+        // Use platform-specific mock data
+        const platformData = generateMockDataByPlatform(platform);
+        console.log(` > Serving ${platformData.length} ${platform} mentions`);
+        res.status(200).json(platformData);
 
     } catch (err) {
         console.error(' > MOCK DATA ERROR:', err);
