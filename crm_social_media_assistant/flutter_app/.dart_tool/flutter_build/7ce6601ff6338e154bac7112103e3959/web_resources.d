@@ -1,1 +1,0 @@
- build/web/manifest.json:  /home/holberton/Apexive\ Hackathon/Hackathon-Apexive/crm_social_media_assistant/flutter_app/web/index.html /home/holberton/Apexive\ Hackathon/Hackathon-Apexive/crm_social_media_assistant/flutter_app/web/manifest.json
