@@ -2,6 +2,8 @@
 
 A comprehensive solution that integrates **Odoo CRM** with **AI-powered social media monitoring** to automatically detect leads, analyze sentiment, and streamline customer relationship management.
 
+🎥 **[Watch Demo Video](https://www.loom.com/share/7537851b93cc4aa1822cc11d9a2059de?sid=ccda4245-e904-4002-8323-41c5225b7b6e)** - See the full application in action
+
 ## 🚀 Project Overview
 
 This system monitors social media mentions (currently Twitter), analyzes them using AI, and automatically creates qualified leads in your Odoo CRM system. It features platform-specific AI personas that provide contextual analysis and actionable insights.
