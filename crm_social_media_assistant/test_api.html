@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>CRM Social Media Assistant - API Test</h1>
+    
+    <button onclick="testTwitter()">Test Twitter API</button>
+    <button onclick="testLinkedIn()">Test LinkedIn API</button>
+    <button onclick="testInstagram()">Test Instagram API</button>
+    <button onclick="testFacebook()">Test Facebook API</button>
+    
+    <div id="results" style="margin-top: 20px; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+        <h3>Results will appear here...</h3>
+    </div>
+
+    <script>
+        async function testPlatform(platform) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `<h3>Testing ${platform}...</h3>`;
+            
+            try {
+                const response = await fetch(`http://localhost:3000/analyze-mentions?platform=${platform}`);
+                const data = await response.json();
+                
+                resultsDiv.innerHTML = `
+                    <h3>${platform.toUpperCase()} Results:</h3>
+                    <p><strong>Persona:</strong> ${data.persona?.name} ${data.persona?.avatar}</p>
+                    <p><strong>Title:</strong> ${data.persona?.title}</p>
+                    <p><strong>Mentions:</strong> ${data.mentions?.length || 0}</p>
+                    <p><strong>First Mention:</strong> ${data.mentions?.[0]?.text || 'None'}</p>
+                    <p><strong>Persona Insight:</strong> ${data.mentions?.[0]?.ai_analysis?.persona_insight || 'None'}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `<h3>Error:</h3><p>${error}</p>`;
+            }
+        }
+        
+        function testTwitter() { testPlatform('twitter'); }
+        function testLinkedIn() { testPlatform('linkedin'); }
+        function testInstagram() { testPlatform('instagram'); }
+        function testFacebook() { testPlatform('facebook'); }
+    </script>
+</body>
+</html>

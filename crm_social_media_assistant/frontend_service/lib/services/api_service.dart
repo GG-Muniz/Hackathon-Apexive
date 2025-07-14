@@ -46,7 +46,7 @@ class ApiService {
     }
   }
 
-  Future<List<dynamic>> getAnalyzedMentions({String platform = 'twitter'}) async {
+  Future<Map<String, dynamic>> getAnalyzedMentions({String platform = 'twitter'}) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/analyze-mentions?platform=$platform'),
@@ -54,7 +54,9 @@ class ApiService {
       );
       
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        final data = json.decode(response.body);
+        // Return the full response with persona data and mentions
+        return data;
       } else {
         throw Exception('Failed to load mentions');
       }
@@ -105,6 +107,42 @@ class ApiService {
       }
     } catch (e) {
       throw Exception('Failed to generate reply: $e');
+    }
+  }
+
+  // Get all AI personas
+  Future<Map<String, dynamic>> getPersonas() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/personas'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to load personas');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to server: $e');
+    }
+  }
+
+  // Get specific platform persona
+  Future<Map<String, dynamic>> getPersona(String platform) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/personas/$platform'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to load $platform persona');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to server: $e');
     }
   }
 }

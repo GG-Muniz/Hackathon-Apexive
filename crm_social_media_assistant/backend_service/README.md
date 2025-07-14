@@ -219,5 +219,5 @@ The service will log missing environment variables on startup.
 
 ## 👥 Authors
 
-- **Gabriel Garcia Muniz** 
-- **Fernando Lockwood**
+- **Gabriel Garcia Muniz** - [GitHub](https://github.com/GG-Muniz)
+- **Fernando Lockwood** - [GitHub](https://github.com/flockwood)

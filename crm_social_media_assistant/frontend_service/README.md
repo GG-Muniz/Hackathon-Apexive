@@ -10,7 +10,8 @@ This Flutter app serves as the frontend interface for monitoring social media me
 
 - **Framework:** Flutter (Web)
 - **Language:** Dart
-- **UI:** Material Design 3
+- **UI:** Material Design 3 with custom dark theme
+- **Charts:** FL Chart (v0.64.0) for data visualization
 - **HTTP Client:** http package
 - **Architecture:** StatefulWidget with services layer
 
@@ -18,12 +19,16 @@ This Flutter app serves as the frontend interface for monitoring social media me
 
 ```
 lib/
-├── main.dart                    # App entry point & MaterialApp setup
+├── main.dart                           # App entry point & MaterialApp setup
 ├── screens/
-│   ├── login_screen.dart       # Authentication interface
-│   └── dashboard_screen.dart   # Main dashboard with platform selection
-└── services/
-    └── api_service.dart        # Backend API communication
+│   ├── login_screen.dart              # Authentication interface
+│   ├── dashboard_screen.dart          # Main dashboard with platform selection
+│   ├── platform_analytics_screen.dart # Platform-specific analytics dashboard
+│   └── mention_analytics_screen.dart  # Individual mention analysis
+├── services/
+│   └── api_service.dart               # Backend API communication
+└── widgets/
+    └── persona_chat_widget.dart       # AI chat interface
 ```
 
 ## ⚙️ Setup & Installation
@@ -74,8 +79,23 @@ Application will be available at http://localhost:[port] (default varies)
 - **Platform Selection:** Toggle between Twitter, LinkedIn, Instagram, Facebook
 - **AI Persona Integration:** Display platform-specific analysis from backend personas
 - **Real-time Data:** Fetch and display social media mentions
+- **Analytics Navigation:** Direct access to detailed analytics for each platform and mention
 - **Lead Management:** Create CRM leads directly from mentions
-- **Material Design 3:** Modern UI with consistent theming
+- **Dark Theme:** Professional dark theme with warm sand accents (#DAC0A7, #FFF2D7)
+
+### Platform Analytics Screen
+- **Comprehensive Metrics:** Total mentions, sentiment analysis, lead generation tracking
+- **Interactive Charts:** Line charts for trends, pie charts for sentiment, bar charts for keywords
+- **Time Range Selection:** 7-day, 30-day, and 90-day analytics periods
+- **AI Insights:** Platform-specific recommendations and strategic analysis
+- **Floating Chat:** AI persona consultation widget
+
+### Mention Analytics Screen
+- **Individual Analysis:** Detailed breakdown of specific social media mentions
+- **Engagement Metrics:** Reach, likes, shares, comments, and interaction tracking
+- **Sentiment Classification:** Positive, negative, neutral sentiment with visual indicators
+- **Lead Qualification:** AI-powered lead scoring and priority assignment
+- **Recommended Actions:** Contextual action suggestions for engagement optimization
 
 ### Platform Icons
 - Twitter: `@` symbol (`Icons.alternate_email`)
@@ -113,17 +133,21 @@ class ApiService {
 
 ### Current Features
 - ✅ Platform-specific dashboard views
+- ✅ Interactive analytics dashboards with charts
+- ✅ AI persona chat consultation
 - ✅ Backend API integration
-- ✅ Material Design 3 theming
+- ✅ Dark theme with warm sand color palette
 - ✅ Responsive web interface
 - ✅ Error handling for API calls
+- ✅ Individual mention detailed analysis
+- ✅ Time-range analytics filtering
+- ✅ Context-aware AI responses
 
-### Planned Features
-- 🔄 Real-time notifications
-- 🔄 Advanced filtering and search
-- 🔄 Data visualization charts
-- 🔄 Persona-specific UI themes
-- 🔄 Export functionality
+### Recent Updates
+- ✨ **Analytics Enhancement** - Comprehensive analytics with FL Chart integration
+- ✨ **AI Chat Functionality** - Interactive chat with platform-specific personas
+- ✨ **Color Palette Refresh** - Warm sand accents replacing gold theme
+- ✨ **UI Improvements** - Fixed text visibility and header prominence issues
 
 ## 🔧 Development
 
@@ -286,7 +310,49 @@ The app is designed for web browsers with:
 - Material Design 3 theming is consistent across the app
 - State management is kept simple with StatefulWidget patterns
 
+## 🎨 AI Personas
+
+The application features platform-specific AI personas for consultation:
+
+### Echo (Twitter) ⚡
+- **Specialty:** Real-Time Response Specialist
+- **Focus:** Trending topics, viral content, rapid engagement
+- **Color Scheme:** Twitter blue gradient
+
+### Sterling (LinkedIn) 🧠
+- **Specialty:** B2B Lead Intelligence Expert
+- **Focus:** Professional networking, lead generation, industry insights
+- **Color Scheme:** LinkedIn blue gradient
+
+### Vibe (Instagram) ✨
+- **Specialty:** Creative Engagement Guru
+- **Focus:** Visual storytelling, hashtag strategies, influencer marketing
+- **Color Scheme:** Instagram pink/red gradient
+
+### Harmony (Facebook) 💫
+- **Specialty:** Community Growth Specialist
+- **Focus:** Community building, local business, audience engagement
+- **Color Scheme:** Facebook blue gradient
+
+## 📊 Analytics Features
+
+### Chart Types
+- **Line Charts:** Mention volume trends over time periods
+- **Pie Charts:** Sentiment distribution visualization
+- **Bar Charts:** Top keywords and engagement metrics
+
+### Key Metrics
+- **Mention Volume:** Total mentions tracked across platforms
+- **Sentiment Score:** Positive sentiment percentage analysis
+- **Lead Generation:** Qualified leads identified and created
+- **Engagement Rates:** Platform-specific interaction metrics
+
+### AI Insights
+- **Peak Engagement:** Optimal posting times and audience activity
+- **Content Recommendations:** Performance-based content suggestions
+- **Attention Alerts:** Issues requiring immediate action or response
+
 ## 👥 Authors
 
-- **Gabriel Garcia Muniz** 
-- **Fernando Lockwood**
+- **Gabriel Garcia Muniz** - [GitHub](https://github.com/GG-Muniz)
+- **Fernando Lockwood** - [GitHub](https://github.com/flockwood)

@@ -11,12 +11,15 @@ This system monitors social media mentions (currently Twitter), analyzes them us
 - **AI-Powered Social Media Analysis** - Sentiment analysis and lead qualification  
 - **Platform-Specific AI Personas** - Specialized assistants for Twitter, LinkedIn, Instagram, and Facebook
 - **Real-time Monitoring** - Live social media mention tracking
+- **Interactive Analytics Dashboard** - Comprehensive analytics with charts, metrics, and insights
+- **AI Chat Consultation** - Interactive chat with AI personas for strategy advice
 - **Mock Development Environment** - Stable endpoints for rapid development
 
 ## 🛠️ Tech Stack
 
 - **Backend:** Node.js, Express.js ([details](./crm_social_media_assistant/backend_service/README.md))
-- **Frontend:** Flutter ([details](./crm_social_media_assistant/frontend_service/README.md))
+- **Frontend:** Flutter with Material Design 3 ([details](./crm_social_media_assistant/frontend_service/README.md))
+- **Charts & Visualization:** FL Chart library for analytics dashboards
 - **Platform:** Odoo (via Docker), PostgreSQL
 - **External APIs:** Twitter API v2, OpenAI API
 - **Development Tools:** Docker, Make, jq
@@ -119,7 +122,27 @@ flutter run -d web
 - Odoo credentials are pre-configured in the environment template
 - Install `jq` for formatted JSON output: `sudo apt-get install jq`
 
+## 🎨 Recent Updates
+
+### Analytics Enhancement (Latest)
+- **Interactive Analytics Dashboard** - Added comprehensive analytics with platform-specific metrics
+- **Data Visualization** - Integrated FL Chart library for line charts, pie charts, and bar charts
+- **AI-Powered Insights** - Contextual insights and recommendations based on analytics data
+- **Platform Analytics Pages** - Dedicated analytics pages for each social media platform
+
+### Chat Functionality
+- **AI Persona Chat** - Interactive chat widget with platform-specific AI personalities
+- **Context-Aware Responses** - Chat responses based on current analytics and performance data
+- **Suggested Questions** - Platform-specific question suggestions for user guidance
+- **Real-time Interaction** - Live chat simulation with typing indicators
+
+### Design & UI Improvements
+- **Warm Sand Color Palette** - Updated from gold to warm sand colors (#DAC0A7, #FFF2D7)
+- **Dark Theme Implementation** - Professional dark theme with warm accent colors
+- **Improved Typography** - Enhanced readability and visual hierarchy
+- **UI Bug Fixes** - Fixed chat input visibility and header prominence issues
+
 ## 👥 Authors
 
-- **Gabriel Garcia Muniz** 
-- **Fernando Lockwood**
+- **Gabriel Garcia Muniz** - [GitHub](https://github.com/GG-Muniz)
+- **Fernando Lockwood** - [GitHub](https://github.com/flockwood)
